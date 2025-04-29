@@ -53,7 +53,9 @@ jobs:
         aws sns publish \
           --topic-arn "$SNS_TOPIC_ARN" \
           --region "$AWS_REGION" \
-          --message "✅ Frontend deployed successfully 🚀\nBranch: $BRANCH\nCommit: $COMMIT"
+         --message "✅ Frontend deployed successfully 🚀
+         Branch: $BRANCH
+         Commit: $COMMIT"
 
     - name: 📢 Notify via SNS – ❌ Failure
       if: failure()
