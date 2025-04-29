@@ -10,6 +10,7 @@ It is built with vanilla **HTML, CSS, and JavaScript** and hosted on **AWS S3** 
 
 ---
 
+
 ## 🏗️ Project Structure
 
 ```
