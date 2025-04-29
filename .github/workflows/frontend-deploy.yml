@@ -1,4 +1,4 @@
-name: ✨ Deploy Windy Frontend to S3 + Amplify
+name: ✨ Deploy Windy Frontend to S3 + Amplify!
 
 on:
   push:
