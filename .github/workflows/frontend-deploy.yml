@@ -40,5 +40,6 @@ jobs:
         SNS_TOPIC_ARN: ${{ secrets.SNS_TOPIC_ARN }}
       run: |
         aws sns publish --topic-arn "$SNS_TOPIC_ARN" \
-          --message "✅ Frontend deployed to S3 successfully via GitHub Actions."
+          --message "✅ Frontend deployed to S3 successfully via GitHub Actions." \
+          --region "$AWS_REGION"
 
