@@ -17,9 +17,17 @@ jobs:
       with:
         python-version: '3.x'
 
-    - name: 📦 Install AWS CLI
+    - name: 📦 Install tools (AWS CLI + Minifiers)
       run: |
         pip install awscli
+        npm install -g html-minifier terser clean-css-cli
+
+    - name: 🧼 Lint and Minify Assets
+      run: |
+        echo "Minifying HTML, CSS, and JS..."
+        find . -name "*.html" -exec html-minifier --collapse-whitespace --remove-comments --minify-css true --minify-js true -o {} {} \;
+        find . -name "*.css" -exec cleancss -o {} {} \;
+        find . -name "*.js" -exec terser --compress --mangle -o {} -- {} \;
 
     - name: 🌌 Sync to S3 (Frontend)
       env:
@@ -29,6 +37,7 @@ jobs:
         S3_BUCKET: ${{ secrets.S3_BUCKET }}
       run: |
         aws s3 sync ./ s3://$S3_BUCKET --delete --region $AWS_REGION \
+          --cache-control "max-age=31536000" \
           --exclude ".git/*" --exclude ".github/*"
 
     - name: 📢 Notify via SNS – ✅ Success
@@ -39,10 +48,12 @@ jobs:
         AWS_REGION: ${{ secrets.AWS_REGION }}
         SNS_TOPIC_ARN: ${{ secrets.SNS_TOPIC_ARN }}
       run: |
+        COMMIT=$(git rev-parse --short HEAD)
+        BRANCH=$(git rev-parse --abbrev-ref HEAD)
         aws sns publish \
           --topic-arn "$SNS_TOPIC_ARN" \
           --region "$AWS_REGION" \
-          --message "✅ Frontend deployed successfully via GitHub Actions."
+          --message "✅ Frontend deployed successfully 🚀\nBranch: $BRANCH\nCommit: $COMMIT"
 
     - name: 📢 Notify via SNS – ❌ Failure
       if: failure()
@@ -52,8 +63,9 @@ jobs:
         AWS_REGION: ${{ secrets.AWS_REGION }}
         SNS_TOPIC_ARN: ${{ secrets.SNS_TOPIC_ARN }}
       run: |
+        COMMIT=$(git rev-parse --short HEAD)
+        BRANCH=$(git rev-parse --abbrev-ref HEAD)
         aws sns publish \
           --topic-arn "$SNS_TOPIC_ARN" \
           --region "$AWS_REGION" \
-          --message "❌ Frontend deployment failed in GitHub Actions. Please check the logs."
-
+          --message "❌ Frontend deployment FAILED ❗\nBranch: $BRANCH\nCommit: $COMMIT\nCheck logs for details."
