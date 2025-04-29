@@ -70,4 +70,7 @@ jobs:
         aws sns publish \
           --topic-arn "$SNS_TOPIC_ARN" \
           --region "$AWS_REGION" \
-          --message "❌ Frontend deployment FAILED ❗\nBranch: $BRANCH\nCommit: $COMMIT\nCheck logs for details."
+          --message "❌ Frontend deployment FAILED ❗
+          Branch: $BRANCH
+          Commit: $COMMIT
+          Check logs for details."
